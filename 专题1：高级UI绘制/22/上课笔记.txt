@@ -1,0 +1,124 @@
+
+
+MaterialDesign动画
+
+1.Touch Feedback（触摸反馈）
+	例子：水波纹效果
+	水波纹效果是5.0+自带的。
+	
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:text="@string/hello_world" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:background="?attr/selectableItemBackground"
+        android:text="@string/hello_world" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:background="?attr/selectableItemBackgroundBorderless"//没有边界，圆形
+        android:text="@string/hello_world" />
+
+	可以修改背景颜色和水波纹的颜色：
+	 <item name="colorControlHighlight">@color/colorPrimary_pink</item>//高亮颜色
+        <item name="colorButtonNormal">@color/material_blue_grey_800</item>//默认的颜色
+
+	最好使用AppcompatActivity
+	注意：如果是Button设置背景，原来的背景会被替换了。其他的控件可以设置背景。
+
+2.Reveal Effect（揭露效果）
+	例子：Activity的揭露出现的效果。
+	ViewAnimationUtil工具类
+
+	//圆形水波纹揭露效果
+	ViewAnimationUtils.createCircularReveal(
+			view, //作用在哪个View上面
+			centerX, centerY, //扩散的中心点
+			startRadius, //开始扩散初始半径
+			endRadius)//扩散结束半径
+
+3.Activity transition（Activity转场动画效果）
+ 概念：两个Activity进行跳转的时候，转场动画。
+
+	ActivityOptions类。只支持API21以上的版本。
+	版本判断会比较麻烦，谷歌很贴心 设计了一个兼容类：ActivityOptionsCompat（v4包中）
+	但是此类在低版本上面并没有转场动画效果，只是解决了我们手动去判断版本的问题而已。
+	
+	转场动画可以分为两大类：共享元素转换和普通的转换
+	
+	使用转换动画前提：需要给两个Activity都设置如下，让其允许使用转场动画。
+	//方法一：
+	getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+	//方法二：
+	修改主题：<item name="android:windowContentTransitions">true</item>
+
+	1）共享元素转换
+		概念：可以把两个Activity当中的相同的元素关联起来做连贯的变换动画。
+		前提：（1）给两个Activity当中的共享元素view都设置同一个名字---android:transitionName
+				<ImageView
+				android:id="@+id/iv1"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:scaleType="centerCrop"
+				android:transitionName="iv_meinv3"
+				android:src="@drawable/meinv3" />
+
+			
+		
+		按返回键的时候自动实现了返回的共享元素转场动画，原因看源码：
+		public void onBackPressed() {
+			finishAfterTransition();
+		}
+		public void finishAfterTransition() {
+			if (!mActivityTransitionState.startExitBackTransition(this)) {
+			    finish();
+			}
+		}
+
+		//单个元素共享
+		ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(this, iv1, "iv_meinv3");
+		Intent intent = new Intent(this, SecondActivity.class);
+		startActivity(intent, optionsCompat.toBundle());
+		//多个共享元素
+		ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
+				.makeSceneTransitionAnimation(this, Pair.create((View)iv1, "iv1"),Pair.create((View)bt, "bt"));
+		Intent intent = new Intent(this, SecondActivity.class);
+		startActivity(intent, optionsCompat.toBundle());
+
+
+	2）普通的转换动画
+		（只有API 21才有下面自带效果）
+		三种系统带的：滑动效果(Slide)、展开效果Explode、渐变显示隐藏效果Fade
+			
+
+
+
+4.Curved motion(曲线运动)
+	设计：view的平移旋转等效果结合Path、Interpolator插值器。
+
+5.View State change (视图的状态改变)
+	例子：按下一个控件会有Z轴的阴影加深效果。
+
+
+
+作业：
+	1.实现揭露效果的低版本兼容！
+
+作业：
+	1.使用RecyclerView实现共享元素转场动画。
+	2.如何实现普通的转换动画滑动效果(Slide)，兼容低版本实现。
+		手动撸。提示：各种属性动画组合实现。
+
+	view.setTranslationX(xxx)
+	objectClass.setCurrentRadius(xxx)
+
+
+
+
+
+
+
+
+

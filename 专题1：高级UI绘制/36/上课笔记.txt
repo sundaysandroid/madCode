@@ -1,0 +1,21 @@
+
+Path
++贝塞尔曲线等作出很多效果。
++PathMeasure：是一个用来测量Path的类。
+
+canvas.drawPath(path, paint);
+一次性全部绘制完的。
+
+op:option
+
+搜索效果
+0.默认没动画
+1.开始
+2.搜索中
+3.结束
+
+
+
+
+
+
